@@ -12,20 +12,12 @@ import { MathUtils } from 'three';
 
 const params = {
   exposure: 1,
-  bloomStrength: 0.5,
-  bloomThreshold: 0,
-  bloomRadius: 0.5,
+  Strength: 1.0,
+  Threshold: 0.0,
+  Radius: 0.2,
 };
 
-let canvas: any, renderer, scene, camera, geometry, gui, composer, clock;
-
-const param = {
-  value01: 1.0,
-  value02: true,
-  value03: 1.0,
-  value04: 'hoge01',
-};
-
+let canvas: any, renderer, scene, camera, geometry, gui, composer, clock, bloomPass, material;
 function init() {
   canvas = document.querySelector('#c');
   renderer = new THREE.WebGLRenderer({ canvas });
@@ -50,15 +42,15 @@ function addEffect() {
   composer.addPass(new RenderPass(scene, camera));
   //composer.setSize(canvas.clientWidth, canvas.clientHeight);
 
-  const bloomPass = new UnrealBloomPass(
+  bloomPass = new UnrealBloomPass(
     new THREE.Vector2(window.innerWidth, window.innerHeight),
-    1.5,
-    0.4,
-    0.15
+    1,
+    1,
+    1
   );
-  bloomPass.threshold = params.bloomThreshold;
-  bloomPass.strength = params.bloomStrength;
-  bloomPass.radius = params.bloomRadius;
+  bloomPass.threshold = params.Threshold;
+  bloomPass.strength = params.Strength;
+  bloomPass.radius = params.Radius;
   bloomPass.renderToScreen = true;
   composer.addPass(bloomPass);
 
@@ -66,7 +58,7 @@ function addEffect() {
 }
 
 function createCube() {
-  const material = new THREE.LineBasicMaterial({
+  material = new THREE.LineBasicMaterial({
     color: 0x696969,
   });
 
@@ -137,20 +129,17 @@ function addObject() {
 
 function addGUI() {
   gui = new GUI();
-  const folder = gui.addFolder('folder');
+  const folder = gui.addFolder('bloomParams');
   gui.width = 300;
 
-  folder.add(param, 'value01').onChange((value) => {
-    console.log(value);
+  folder.add(params, 'Strength', 0, 4.0).onChange((value) => {
+    bloomPass.strength = value;
   });
-  folder.add(param, 'value02').onChange((value) => {
-    console.log(value);
+  folder.add(params, 'Threshold', 0, 1.0).onChange((value) => {
+    bloomPass.threshold = value;
   });
-  folder.add(param, 'value03', 0, 2.0).onChange((value) => {
-    console.log(value);
-  });
-  folder.add(param, 'value04', ['hoge01', 'hoge02']).onChange((value) => {
-    console.log(value);
+  folder.add(params, 'Radius', 0, 0.5).onChange((value) => {
+    bloomPass.radius = value;
   });
 }
 
