@@ -1,4 +1,4 @@
-https://gakui3.github.io/BoxFrame/
+https://gakui3.github.io/Threejs-BoxFrame/
 
 
 install  
